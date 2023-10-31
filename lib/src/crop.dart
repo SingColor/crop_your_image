@@ -286,7 +286,6 @@ class _CropEditorState extends State<_CropEditor> {
       } else {
         minScale = _rect.height / baseHeight;
       }
-      print('nextScale($nextScale) is fixed to $minScale');
       _applyScale(minScale, focalPoint: focalPoint);
       return;
     }
