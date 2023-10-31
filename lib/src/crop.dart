@@ -2,8 +2,7 @@ part of crop_your_image;
 
 const dotTotalSize = 32.0; // fixed corner dot size.
 
-typedef CornerDotBuilder = Widget Function(
-    double size, EdgeAlignment edgeAlignment);
+typedef CornerDotBuilder = Widget Function(double size, EdgeAlignment edgeAlignment);
 
 typedef CroppingAreaBuilder = Rect Function(Rect imageRect);
 
@@ -108,8 +107,7 @@ class Crop extends StatelessWidget {
     this.fixArea = false,
     this.progressIndicator = const SizedBox.shrink(),
     this.interactive = false,
-  })  : assert((initialSize ?? 1.0) <= 1.0,
-            'initialSize must be less than 1.0, or null meaning not specified.'),
+  })  : assert((initialSize ?? 1.0) <= 1.0, 'initialSize must be less than 1.0, or null meaning not specified.'),
         super(key: key);
 
   @override
@@ -203,9 +201,7 @@ class _CropEditorState extends State<_CropEditor> {
 
   bool get _isImageLoading => _lastComputed != null;
 
-  _Calculator get calculator => _isFitVertically
-      ? const _VerticalCalculator()
-      : const _HorizontalCalculator();
+  _Calculator get calculator => _isFitVertically ? const _VerticalCalculator() : const _HorizontalCalculator();
 
   set rect(Rect newRect) {
     setState(() {
@@ -270,29 +266,31 @@ class _CropEditorState extends State<_CropEditor> {
 
     // width
     final newWidth = baseWidth * nextScale;
-    final horizontalFocalPointBias = focalPoint == null
-        ? 0.5
-        : (focalPoint.dx - _imageRect.left) / _imageRect.width;
-    final leftPositionDelta =
-        (newWidth - _imageRect.width) * horizontalFocalPointBias;
+    final horizontalFocalPointBias = focalPoint == null ? 0.5 : (focalPoint.dx - _imageRect.left) / _imageRect.width;
+    final leftPositionDelta = (newWidth - _imageRect.width) * horizontalFocalPointBias;
 
     // height
     final newHeight = baseHeight * nextScale;
-    final verticalFocalPointBias = focalPoint == null
-        ? 0.5
-        : (focalPoint.dy - _imageRect.top) / _imageRect.height;
-    final topPositionDelta =
-        (newHeight - _imageRect.height) * verticalFocalPointBias;
+    final verticalFocalPointBias = focalPoint == null ? 0.5 : (focalPoint.dy - _imageRect.top) / _imageRect.height;
+    final topPositionDelta = (newHeight - _imageRect.height) * verticalFocalPointBias;
 
     // position
-    final newLeft = max(min(_rect.left, _imageRect.left - leftPositionDelta),
-        _rect.right - newWidth);
-    final newTop = max(min(_rect.top, _imageRect.top - topPositionDelta),
-        _rect.bottom - newHeight);
+    final newLeft = max(min(_rect.left, _imageRect.left - leftPositionDelta), _rect.right - newWidth);
+    final newTop = max(min(_rect.top, _imageRect.top - topPositionDelta), _rect.bottom - newHeight);
 
+    // crop領域より小さくなっていはいけない
     if (newWidth < _rect.width || newHeight < _rect.height) {
+      final double minScale;
+      if (newWidth < _rect.width) {
+        minScale = _rect.width / baseWidth;
+      } else {
+        minScale = _rect.height / baseHeight;
+      }
+      print('nextScale($nextScale) is fixed to $minScale');
+      _applyScale(minScale, focalPoint: focalPoint);
       return;
     }
+
     // apply
     setState(() {
       _imageRect = Rect.fromLTRB(
@@ -467,12 +465,8 @@ class _CropEditorState extends State<_CropEditor> {
                           top: _imageRect.top,
                           child: Image.memory(
                             widget.image,
-                            width: _isFitVertically
-                                ? null
-                                : MediaQuery.of(context).size.width * _scale,
-                            height: _isFitVertically
-                                ? MediaQuery.of(context).size.height * _scale
-                                : null,
+                            width: _isFitVertically ? null : MediaQuery.of(context).size.width * _scale,
+                            height: _isFitVertically ? MediaQuery.of(context).size.height * _scale : null,
                             fit: BoxFit.contain,
                           ),
                         ),
@@ -483,9 +477,7 @@ class _CropEditorState extends State<_CropEditor> {
               ),
               IgnorePointer(
                 child: ClipPath(
-                  clipper: _withCircleUi
-                      ? _CircleCropAreaClipper(_rect)
-                      : _CropAreaClipper(_rect, widget.radius),
+                  clipper: _withCircleUi ? _CircleCropAreaClipper(_rect) : _CropAreaClipper(_rect, widget.radius),
                   child: Container(
                     width: double.infinity,
                     height: double.infinity,
@@ -528,9 +520,7 @@ class _CropEditorState extends State<_CropEditor> {
                             _aspectRatio,
                           );
                         },
-                  child: widget.cornerDotBuilder
-                          ?.call(dotTotalSize, EdgeAlignment.topLeft) ??
-                      const DotControl(),
+                  child: widget.cornerDotBuilder?.call(dotTotalSize, EdgeAlignment.topLeft) ?? const DotControl(),
                 ),
               ),
               Positioned(
@@ -548,9 +538,7 @@ class _CropEditorState extends State<_CropEditor> {
                             _aspectRatio,
                           );
                         },
-                  child: widget.cornerDotBuilder
-                          ?.call(dotTotalSize, EdgeAlignment.topRight) ??
-                      const DotControl(),
+                  child: widget.cornerDotBuilder?.call(dotTotalSize, EdgeAlignment.topRight) ?? const DotControl(),
                 ),
               ),
               Positioned(
@@ -568,9 +556,7 @@ class _CropEditorState extends State<_CropEditor> {
                             _aspectRatio,
                           );
                         },
-                  child: widget.cornerDotBuilder
-                          ?.call(dotTotalSize, EdgeAlignment.bottomLeft) ??
-                      const DotControl(),
+                  child: widget.cornerDotBuilder?.call(dotTotalSize, EdgeAlignment.bottomLeft) ?? const DotControl(),
                 ),
               ),
               Positioned(
@@ -588,9 +574,7 @@ class _CropEditorState extends State<_CropEditor> {
                             _aspectRatio,
                           );
                         },
-                  child: widget.cornerDotBuilder
-                          ?.call(dotTotalSize, EdgeAlignment.bottomRight) ??
-                      const DotControl(),
+                  child: widget.cornerDotBuilder?.call(dotTotalSize, EdgeAlignment.bottomRight) ?? const DotControl(),
                 ),
               ),
             ],
@@ -610,17 +594,13 @@ class _CropAreaClipper extends CustomClipper<Path> {
       ..addPath(
         Path()
           ..moveTo(rect.left, rect.top + radius)
-          ..arcToPoint(Offset(rect.left + radius, rect.top),
-              radius: Radius.circular(radius))
+          ..arcToPoint(Offset(rect.left + radius, rect.top), radius: Radius.circular(radius))
           ..lineTo(rect.right - radius, rect.top)
-          ..arcToPoint(Offset(rect.right, rect.top + radius),
-              radius: Radius.circular(radius))
+          ..arcToPoint(Offset(rect.right, rect.top + radius), radius: Radius.circular(radius))
           ..lineTo(rect.right, rect.bottom - radius)
-          ..arcToPoint(Offset(rect.right - radius, rect.bottom),
-              radius: Radius.circular(radius))
+          ..arcToPoint(Offset(rect.right - radius, rect.bottom), radius: Radius.circular(radius))
           ..lineTo(rect.left + radius, rect.bottom)
-          ..arcToPoint(Offset(rect.left, rect.bottom - radius),
-              radius: Radius.circular(radius))
+          ..arcToPoint(Offset(rect.left, rect.bottom - radius), radius: Radius.circular(radius))
           ..close(),
         Offset.zero,
       )
