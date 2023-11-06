@@ -280,7 +280,7 @@ class _CropEditorState extends State<_CropEditor> {
       final newTop = max(min(_rect.top, _imageRect.top - topPositionDelta), _rect.bottom - newHeight);
 
       return (
-        newRect: Rect.fromLTWH(newLeft, newTop, newLeft + newWidth, newTop + newHeight),
+        newRect: Rect.fromLTRB(newLeft, newTop, newLeft + newWidth, newTop + newHeight),
         newScale: scale,
         newWidth: newWidth,
         newHeight: newHeight,
