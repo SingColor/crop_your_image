@@ -264,41 +264,45 @@ class _CropEditorState extends State<_CropEditor> {
       baseHeight = baseWidth * ratio;
     }
 
-    // width
-    final newWidth = baseWidth * nextScale;
-    final horizontalFocalPointBias = focalPoint == null ? 0.5 : (focalPoint.dx - _imageRect.left) / _imageRect.width;
-    final leftPositionDelta = (newWidth - _imageRect.width) * horizontalFocalPointBias;
+    ({Rect newRect, double newScale, double newWidth, double newHeight}) calc(double scale) {
+      // width
+      final newWidth = baseWidth * scale;
+      final horizontalFocalPointBias = focalPoint == null ? 0.5 : (focalPoint.dx - _imageRect.left) / _imageRect.width;
+      final leftPositionDelta = (newWidth - _imageRect.width) * horizontalFocalPointBias;
 
-    // height
-    final newHeight = baseHeight * nextScale;
-    final verticalFocalPointBias = focalPoint == null ? 0.5 : (focalPoint.dy - _imageRect.top) / _imageRect.height;
-    final topPositionDelta = (newHeight - _imageRect.height) * verticalFocalPointBias;
+      // height
+      final newHeight = baseHeight * scale;
+      final verticalFocalPointBias = focalPoint == null ? 0.5 : (focalPoint.dy - _imageRect.top) / _imageRect.height;
+      final topPositionDelta = (newHeight - _imageRect.height) * verticalFocalPointBias;
 
-    // position
-    final newLeft = max(min(_rect.left, _imageRect.left - leftPositionDelta), _rect.right - newWidth);
-    final newTop = max(min(_rect.top, _imageRect.top - topPositionDelta), _rect.bottom - newHeight);
+      // position
+      final newLeft = max(min(_rect.left, _imageRect.left - leftPositionDelta), _rect.right - newWidth);
+      final newTop = max(min(_rect.top, _imageRect.top - topPositionDelta), _rect.bottom - newHeight);
 
+      return (
+        newRect: Rect.fromLTWH(newLeft, newTop, newLeft + newWidth, newTop + newHeight),
+        newScale: scale,
+        newWidth: newWidth,
+        newHeight: newHeight,
+      );
+    }
+
+    var result = calc(nextScale);
     // crop領域より小さくなっていはいけない
-    if (newWidth < _rect.width || newHeight < _rect.height) {
+    if (result.newWidth < _rect.width || result.newHeight < _rect.height) {
       final double minScale;
-      if (newWidth < _rect.width) {
+      if (result.newWidth < _rect.width) {
         minScale = _rect.width / baseWidth;
       } else {
         minScale = _rect.height / baseHeight;
       }
-      _applyScale(minScale, focalPoint: focalPoint);
-      return;
+      result = calc(minScale);
     }
 
     // apply
     setState(() {
-      _imageRect = Rect.fromLTRB(
-        newLeft,
-        newTop,
-        newLeft + newWidth,
-        newTop + newHeight,
-      );
-      _scale = nextScale;
+      _imageRect = result.newRect;
+      _scale = result.newScale;
     });
   }
 
