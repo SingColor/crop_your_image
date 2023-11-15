@@ -299,6 +299,8 @@ class _CropEditorState extends State<_CropEditor> {
       result = calc(minScale);
     }
 
+    print('newRect: ${result.newRect} newScale: ${result.newScale} _rect: $_rect');
+
     // apply
     setState(() {
       _imageRect = result.newRect;
