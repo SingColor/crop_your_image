@@ -292,7 +292,8 @@ class _CropEditorState extends State<_CropEditor> {
     // crop領域より小さくなっていはいけない
     if (result.newWidth < _rect.width || result.newHeight < _rect.height) {
       final double minScale;
-      if (result.newWidth < _rect.width) {
+      // 縦長の場合
+      if (_isFitVertically) {
         minScale = _rect.width / baseWidth;
       } else {
         minScale = _rect.height / baseHeight;
