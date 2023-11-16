@@ -302,11 +302,8 @@ class _CropEditorState extends State<_CropEditor> {
       logMinScale = minScale;
     }
 
-    print('nextScale: $nextScale focalPoint: $focalPoint newScale: ${result.newScale} _rect: $_rect logMinScale: $logMinScale');
-    if (result.newScale == 1) {
-      // 上記で出していないパラメーターを全部ログに出す
-      print('1! baseWidth: $baseWidth baseHeight: $baseHeight ratio: $ratio _imageRect: $_imageRect');
-    }
+    print(
+        'nextScale: $nextScale focalPoint: $focalPoint newScale: ${result.newScale} _rect: $_rect logMinScale: $logMinScale baseWidth: $baseWidth baseHeight: $baseHeight ratio: $ratio _imageRect: $_imageRect isFitVertically: $_isFitVertically');
 
     // apply
     setState(() {
