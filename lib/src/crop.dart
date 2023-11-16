@@ -287,6 +287,8 @@ class _CropEditorState extends State<_CropEditor> {
       );
     }
 
+    double? logMinScale;
+
     var result = calc(nextScale);
     // crop領域より小さくなっていはいけない
     if (result.newWidth < _rect.width || result.newHeight < _rect.height) {
@@ -297,9 +299,14 @@ class _CropEditorState extends State<_CropEditor> {
         minScale = _rect.height / baseHeight;
       }
       result = calc(minScale);
+      logMinScale = minScale;
     }
 
-    print('newRect: ${result.newRect} newScale: ${result.newScale} _rect: $_rect');
+    print('nextScale: $nextScale focalPoint: $focalPoint newScale: ${result.newScale} _rect: $_rect logMinScale: $logMinScale');
+    if (result.newScale == 1) {
+      // 上記で出していないパラメーターを全部ログに出す
+      print('1! baseWidth: $baseWidth baseHeight: $baseHeight ratio: $ratio _imageRect: $_imageRect');
+    }
 
     // apply
     setState(() {
