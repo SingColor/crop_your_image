@@ -288,7 +288,6 @@ class _CropEditorState extends State<_CropEditor> {
     }
 
     var result = calc(nextScale);
-    final initialRect = result.newRect;
     // crop領域より小さくなっていはいけない
     if (result.newWidth < _rect.width || result.newHeight < _rect.height) {
       final double minScale;
@@ -300,9 +299,6 @@ class _CropEditorState extends State<_CropEditor> {
       }
       result = calc(minScale);
     }
-
-    print(
-        'nextScale: $nextScale newScale: ${result.newScale} initialRect: ${initialRect.width}x${initialRect.height} rect: ${_rect.width}x${_rect.height}}');
 
     // apply
     setState(() {
