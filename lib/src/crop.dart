@@ -254,14 +254,14 @@ class _CropEditorState extends State<_CropEditor> {
   }) {
     late double baseHeight;
     late double baseWidth;
-    final ratio = _targetImage!.height / _targetImage!.width;
+    final imageRatio = _targetImage!.height / _targetImage!.width;
 
     if (_isFitVertically) {
       baseHeight = MediaQuery.of(context).size.height;
-      baseWidth = baseHeight / ratio;
+      baseWidth = baseHeight / imageRatio;
     } else {
       baseWidth = MediaQuery.of(context).size.width;
-      baseHeight = baseWidth * ratio;
+      baseHeight = baseWidth * imageRatio;
     }
 
     ({Rect newRect, double newScale, double newWidth, double newHeight}) calc(double scale) {
@@ -291,16 +291,15 @@ class _CropEditorState extends State<_CropEditor> {
     // crop領域より小さくなっていはいけない
     if (result.newWidth < _rect.width || result.newHeight < _rect.height) {
       final double minScale;
-      // 縦長の場合
-      if (_isFitVertically) {
+      final rectRatio = _rect.height / _rect.width;
+      // 切り取り領域が縦長の場合
+      if (rectRatio > 1) {
         minScale = _rect.width / baseWidth;
       } else {
         minScale = _rect.height / baseHeight;
       }
       result = calc(minScale);
     }
-
-    print('nextScale: $nextScale newScale: ${result.newScale} imageRect: ${result.newRect.width}x${result.newRect.height}');
 
     // apply
     setState(() {
