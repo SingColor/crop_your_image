@@ -292,8 +292,8 @@ class _CropEditorState extends State<_CropEditor> {
     if (result.newWidth < _rect.width || result.newHeight < _rect.height) {
       final double minScale;
       final rectRatio = _rect.height / _rect.width;
-      // 切り取り領域が縦長の場合
-      if (rectRatio > 1) {
+      // 画像が切り取り領域よりも縦長の場合
+      if (imageRatio > rectRatio) {
         minScale = _rect.width / baseWidth;
       } else {
         minScale = _rect.height / baseHeight;
